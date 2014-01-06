@@ -55,6 +55,7 @@ public class CustomerResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createCustomer(Customer customer){
+		validateCustomer(customer);
 		Customer customerWithId = manager.getCustomerWithId(customer.getId());
 		if(customerWithId != null){
 			throw new WebApplicationException(Response.status(Status.CONFLICT).entity("Customer with id " + customer.getId() +" already exists.").build());
@@ -64,10 +65,19 @@ public class CustomerResource {
 		return Response.status(Status.CREATED).entity("Customer with Id " + customer.getId() + " created successfully").build();
 	}
 	
+	private void validateCustomer(Customer customer) {
+		if(customer.getId()<0 || customer.getName()==null || customer.getName().trim().equals("") || 
+		   customer.getAddress()==null || customer.getAddress().trim().equals(""))
+		{
+				throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid input for Customer with id "+customer.getId()).build());
+		}
+	}
+
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateCustomer(final @PathParam("id") int id, Customer cust){
+		validateCustomer(cust);
 		checkIfCustomerExists(id);
 		manager.updateCustomer(id, cust);
 		return Response.ok("Customer with Id " + id + " udpated successfully").build();
