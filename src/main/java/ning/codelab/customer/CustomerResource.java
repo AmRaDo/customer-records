@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 
 import ning.codelab.customer.persist.CustomerPersistance;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -66,10 +67,17 @@ public class CustomerResource {
 	}
 	
 	private void validateCustomer(Customer customer) {
-		if(customer.getId()<0 || customer.getName()==null || customer.getName().trim().equals("") || 
-		   customer.getAddress()==null || customer.getAddress().trim().equals(""))
+		if(customer.getId()<0)
 		{
-				throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid input for Customer with id "+customer.getId()).build());
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid Customer id "+customer.getId()).build());
+		}	
+		if (Strings.isNullOrEmpty(customer.getName()) || customer.getName().trim().isEmpty())
+		{
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid Customer Name : "+customer.getName()).build());
+		}		
+		if(Strings.isNullOrEmpty(customer.getAddress()) || customer.getAddress().trim().isEmpty())
+		{
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid Customer Address : "+customer.getAddress()).build());
 		}
 	}
 

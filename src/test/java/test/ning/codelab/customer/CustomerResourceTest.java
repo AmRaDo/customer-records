@@ -46,15 +46,15 @@ public class CustomerResourceTest {
 	@Test
 	public void testRetrieveCustomer() {
 		Customer testCustomer = new Customer();
-		testCustomer.setId(1);
+		testCustomer.setId(0);
 		testCustomer.setName("testName");
 		testCustomer.setAddress("testAddress");
-		expect(manager.getCustomerWithId(1)).andReturn(testCustomer).anyTimes();
+		expect(manager.getCustomerWithId(0)).andReturn(testCustomer).anyTimes();
 		replay(manager);
-		Customer retrieveCustomer = resource.retrieveCustomer(1);
+		Customer retrieveCustomer = resource.retrieveCustomer(0);
 
 		Assert.assertNotNull(retrieveCustomer);
-		Assert.assertEquals(retrieveCustomer.getId(), 1);
+		Assert.assertEquals(retrieveCustomer.getId(), 0);
 		Assert.assertEquals(retrieveCustomer.getName(), "testName");
 		Assert.assertEquals(retrieveCustomer.getAddress(), "testAddress");
 	}
@@ -164,31 +164,51 @@ public class CustomerResourceTest {
 	}
 	
 	@Test (expectedExceptions= WebApplicationException.class)
-	public void validateCreateCustomerInput()
+	public void validateCreateCustomerNullInput()
 	{
 		Customer testCustomer = new Customer();
-		testCustomer.setId(1);
-		testCustomer.setName("");
-		testCustomer.setAddress("");
+		testCustomer.setId(-1);
+		testCustomer.setName(null);
+		testCustomer.setAddress(null);
 		expect(manager.getCustomerWithId(1)).andReturn(testCustomer).anyTimes();
 		replay(manager);
-		Response createCustomer = resource.createCustomer(testCustomer);
-		Assert.assertNotNull(createCustomer);
-		Assert.assertEquals(createCustomer.getStatus(), Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		resource.createCustomer(testCustomer);
 	}
 	
 	@Test (expectedExceptions= WebApplicationException.class)
-	public void validateUpdateCustomerInput()
+	public void validateCreateCustomerBlankEmpty()
 	{
 		Customer testCustomer = new Customer();
-		testCustomer.setId(1);
+		testCustomer.setId(0);
+		testCustomer.setName("");
+		testCustomer.setAddress("");
+		expect(manager.getCustomerWithId(0)).andReturn(testCustomer).anyTimes();
+		replay(manager);
+		resource.createCustomer(testCustomer);
+	}
+	
+	@Test (expectedExceptions= WebApplicationException.class)
+	public void validateUpdateCustomerNullInput()
+	{
+		Customer testCustomer = new Customer();
+		testCustomer.setId(-1);
 		testCustomer.setName(null);
-		testCustomer.setAddress("updateAddr");
+		testCustomer.setAddress(null);
 		expect(manager.getCustomerWithId(1)).andReturn(testCustomer).anyTimes();
 		replay(manager);
-		Response updCustomer = resource.updateCustomer(testCustomer.getId(), testCustomer);
-		Assert.assertNotNull(updCustomer);
-		Assert.assertEquals(updCustomer.getStatus(), Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		resource.updateCustomer(testCustomer.getId(), testCustomer);
+	}
+	
+	@Test (expectedExceptions= WebApplicationException.class)
+	public void validateUpdateCustomerBlankEmpty()
+	{
+		Customer testCustomer = new Customer();
+		testCustomer.setId(0);
+		testCustomer.setName("");
+		testCustomer.setAddress("");
+		expect(manager.getCustomerWithId(0)).andReturn(testCustomer).anyTimes();
+		replay(manager);
+		resource.updateCustomer(testCustomer.getId(), testCustomer);
 	}
 	
 }
