@@ -78,6 +78,32 @@ public class CustomerResourceTest {
 		testCustomer.setAddress("testAddress");
 		expect(manager.getCustomerWithId(1)).andReturn(testCustomer).anyTimes();
 		replay(manager);
-		Response createCustomer = resource.createCustomer(testCustomer);
+		resource.createCustomer(testCustomer);
+	}
+	
+	@Test
+	public void testUpdatePresentCustomer()
+	{
+		Customer cust = new Customer();
+		cust.setId(1);
+		cust.setName("UpdatedName");
+		cust.setAddress("updatedAddress");
+		expect(manager.getCustomerWithId(1)).andReturn(cust).anyTimes();
+		replay(manager);
+		Response updateCustomer = resource.updateCustomer(cust.getId(), cust);
+		Assert.assertNotNull(updateCustomer);
+		Assert.assertEquals(updateCustomer.getStatus(), Status.OK.getStatusCode());
+	}
+	
+	@Test (expectedExceptions = WebApplicationException.class)
+	public void testUpdateAbsentCustomer()
+	{
+		Customer cust = new Customer();
+		cust.setId(1);
+		cust.setName("UpdatedName");
+		cust.setAddress("updatedAddress");
+		expect(manager.getCustomerWithId(1)).andReturn(null).anyTimes();
+		replay(manager);
+		resource.updateCustomer(cust.getId(), cust);
 	}
 }

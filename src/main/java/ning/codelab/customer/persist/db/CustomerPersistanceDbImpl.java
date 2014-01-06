@@ -1,4 +1,4 @@
-package ning.codelab.customer.db;
+package ning.codelab.customer.persist.db;
 
 import java.util.ArrayList;
 import java.util.HashMap;

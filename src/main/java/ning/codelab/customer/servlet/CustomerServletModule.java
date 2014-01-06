@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ning.codelab.customer.CustomerResource;
-import ning.codelab.customer.db.CustomerPersistanceDbImpl;
 import ning.codelab.customer.persist.CustomerPersistance;
+import ning.codelab.customer.persist.db.CustomerPersistanceDbImpl;
 
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
