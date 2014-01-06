@@ -24,79 +24,96 @@ import com.google.inject.Singleton;
 @Path("cust")
 @Singleton
 public class CustomerResource {
-	
+
 	private final CustomerPersistance manager;
-	
+
 	@Inject
-	public CustomerResource(CustomerPersistance manager){
+	public CustomerResource(CustomerPersistance manager) {
 		this.manager = manager;
 	}
 
 	private void checkIfCustomerExists(int id) {
 		Customer customerWithId = manager.getCustomerWithId(id);
-		if(customerWithId == null){
-			throw new WebApplicationException(Response.status(Status.NOT_FOUND).entity("Customer with id " + id + " not found").build());
+		if (customerWithId == null) {
+			throw new WebApplicationException(Response.status(Status.NOT_FOUND)
+					.entity("Customer with id " + id + " not found").build());
 		}
 	}
-	
+
+	private void validateCustomer(Customer customer) {
+		if (customer.getId() < 0) {
+			throw new WebApplicationException(Response
+					.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Invalid Customer id " + customer.getId()).build());
+		}
+		if (Strings.isNullOrEmpty(customer.getName())
+				|| customer.getName().trim().isEmpty()) {
+			throw new WebApplicationException(Response
+					.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Invalid Customer Name : " + customer.getName())
+					.build());
+		}
+		if (Strings.isNullOrEmpty(customer.getAddress())
+				|| customer.getAddress().trim().isEmpty()) {
+			throw new WebApplicationException(Response
+					.status(Status.INTERNAL_SERVER_ERROR)
+					.entity("Invalid Customer Address : "
+							+ customer.getAddress()).build());
+		}
+	}
+
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Customer retrieveCustomer(final @PathParam("id") int id){
-		 checkIfCustomerExists(id);
-		 return manager.getCustomerWithId(id);
+	public Customer retrieveCustomer(final @PathParam("id") int id) {
+		checkIfCustomerExists(id);
+		return manager.getCustomerWithId(id);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Customer> retrieveCustomer(){
-		 return manager.getAllCustomers();
+	public List<Customer> retrieveCustomer() {
+		return manager.getAllCustomers();
 	}
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response createCustomer(Customer customer){
+	public Response createCustomer(Customer customer) {
 		validateCustomer(customer);
 		Customer customerWithId = manager.getCustomerWithId(customer.getId());
-		if(customerWithId != null){
-			throw new WebApplicationException(Response.status(Status.CONFLICT).entity("Customer with id " + customer.getId() +" already exists.").build());
+		if (customerWithId != null) {
+			throw new WebApplicationException(Response
+					.status(Status.CONFLICT)
+					.entity("Customer with id " + customer.getId() + " already exists.")
+					.build());
 		}
-		
+
 		manager.addCustomer(customer);
-		return Response.status(Status.CREATED).entity("Customer with Id " + customer.getId() + " created successfully").build();
-	}
-	
-	private void validateCustomer(Customer customer) {
-		if(customer.getId()<0)
-		{
-			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid Customer id "+customer.getId()).build());
-		}	
-		if (Strings.isNullOrEmpty(customer.getName()) || customer.getName().trim().isEmpty())
-		{
-			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid Customer Name : "+customer.getName()).build());
-		}		
-		if(Strings.isNullOrEmpty(customer.getAddress()) || customer.getAddress().trim().isEmpty())
-		{
-			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity("Invalid Customer Address : "+customer.getAddress()).build());
-		}
+		return Response.status(Status.CREATED)
+				.entity("Customer with Id " + customer.getId() + " created successfully.")
+				.build();
 	}
 
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateCustomer(final @PathParam("id") int id, Customer cust){
+	public Response updateCustomer(final @PathParam("id") int id, Customer cust) {
+		if (id != cust.getId()) {
+			throw new WebApplicationException(Response.status(Status.CONFLICT)
+					.entity("Cannot change id of existing customer.").build());
+		}
 		validateCustomer(cust);
 		checkIfCustomerExists(id);
 		manager.updateCustomer(id, cust);
 		return Response.ok("Customer with Id " + id + " udpated successfully").build();
 	}
-	
+
 	@DELETE
 	@Path("/{id}")
-	public Response deleteCustomer(final @PathParam("id") int id){
+	public Response deleteCustomer(final @PathParam("id") int id) {
 		checkIfCustomerExists(id);
 		manager.deleteCustomer(id);
 		return Response.ok("Customer with Id " + id + " deleted successfully").build();
 	}
-	
+
 }
