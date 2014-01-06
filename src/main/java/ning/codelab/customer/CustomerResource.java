@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -38,8 +39,9 @@ public class CustomerResource {
 	}
 	
 	@GET
+	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Customer retrieveCustomer(int id){
+	public Customer retrieveCustomer(final @PathParam("id") int id){
 		 checkIfCustomerExists(id);
 		 return manager.getCustomerWithId(id);
 	}
@@ -63,15 +65,17 @@ public class CustomerResource {
 	}
 	
 	@PUT
+	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateCustomer(int id, Customer cust){
+	public Response updateCustomer(final @PathParam("id") int id, Customer cust){
 		checkIfCustomerExists(id);
 		manager.updateCustomer(id, cust);
 		return Response.ok("Customer with Id " + id + " udpated successfully").build();
 	}
 	
 	@DELETE
-	public Response deleteCustomer(int id){
+	@Path("/{id}")
+	public Response deleteCustomer(final @PathParam("id") int id){
 		checkIfCustomerExists(id);
 		manager.deleteCustomer(id);
 		return Response.ok("Customer with Id " + id + " deleted successfully").build();
