@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ning.codelab.customer.CustomerResource;
+import ning.codelab.customer.config.ConfigProvider;
+import ning.codelab.customer.config.DBConfig;
 import ning.codelab.customer.persist.CustomerPersistance;
 import ning.codelab.customer.persist.db.CustomerPersistanceDbImpl;
 
@@ -19,12 +21,13 @@ public class CustomerServletModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {
 		bind(CustomerResource.class);
+		bind(DBConfig.class).toProvider(ConfigProvider.class).asEagerSingleton();
 		bind(CustomerPersistance.class).to(CustomerPersistanceDbImpl.class).asEagerSingleton();
 		final Map<String, String> params = new HashMap<String, String>();
 
         params.put(JERSEY_CONFIG_PROPERTY_PACKAGES, CUSTOMER_RESOURCES_PACKAGE);
         params.put(JERSEY_API_JSON_POJO_MAPPING_FEATURE, "true");
 
-		serve("/*").with(GuiceContainer.class);
+		serve("/*").with(GuiceContainer.class, params);
 	}
 }
