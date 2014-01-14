@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+<Customer c_id="1" c_name="user1" c_address="address1"/>
+<Customer c_id="2" c_name="user2" c_address="address2"/>
+</dataset>

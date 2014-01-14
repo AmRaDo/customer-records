@@ -293,5 +293,4 @@ public class CustomerResourceTest {
 		testCustomer.setAddress(" \t   ");
 		resource.updateCustomer(0, testCustomer);
 	}
-
 }
