@@ -15,7 +15,6 @@ import org.unitils.dbunit.annotation.DataSet;
 
 public class CustomerDaoTest extends UnitilsTestNG
 {
-
     private CustomerDAO dao;
     private static final String H2_URL = "jdbc:h2:test1";
     private static final String USER = "";
@@ -30,7 +29,6 @@ public class CustomerDaoTest extends UnitilsTestNG
         dao.create();
     }
 
-    
     @Test
     public void testInsert() throws Exception
     {
@@ -53,6 +51,7 @@ public class CustomerDaoTest extends UnitilsTestNG
         int rowAffected = dao.update(2, "nameUpdated2", "addressUpdated2");
         Assert.assertEquals(1, rowAffected);
     }
+
     @Test
     @DataSet("/CustomerDaoTest.xml")
     public void testFindByID() throws Exception
@@ -80,8 +79,6 @@ public class CustomerDaoTest extends UnitilsTestNG
         Assert.assertEquals("address2", c2.getAddress());
 
     }
-
-
 
     @AfterTest
     public void cleanUp()
