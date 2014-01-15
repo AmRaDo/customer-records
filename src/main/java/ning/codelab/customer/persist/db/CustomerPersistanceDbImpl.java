@@ -24,7 +24,7 @@ public class CustomerPersistanceDbImpl implements CustomerPersistance {
 	}
 	
 	private void makeConnection() {
-		DBI dbAccess = new DBI(db.getUrl()+db.getDataBase(), db.getUser(), db.getPass());
+		DBI dbAccess = new DBI(db.getUrl(), db.getUser(), db.getPass());
 		this.dao = dbAccess.open(CustomerDAO.class);
 	}
 
